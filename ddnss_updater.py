@@ -39,7 +39,7 @@ def main():
         contents = urlopen(request).read()
     except HTTPError as e:
         Log(DebugCategory.ERROR, e.code)
-        Log(DebugCategory.ERROR, e.read())
+        Log(DebugCategory.DEBUG, e.read())
     except URLError as e:
         Log(DebugCategory.ERROR, e.reason)
     except:
@@ -62,7 +62,7 @@ def main():
 
             except HTTPError as e:
                 Log(DebugCategory.ERROR, e.code)
-                Log(DebugCategory.ERROR, e.read())
+                Log(DebugCategory.DEBUG, e.read())
             except URLError as e:
                 Log(DebugCategory.ERROR, e.reason)
             except:
