@@ -74,6 +74,7 @@ def main():
 
                     with open(data_folder / ipFile, 'w') as ipFileFile:
                         ipFileFile.write('{}\n'.format(newIp))
+                    SendMail('IP address for {} changed from {} to {}',format(DOMAIN, oldIp, newIp))
                 else:
                     Log(DebugCategory.ERROR, 'Update failed!')
                     parts = regex.findall('>([^<>\\\\]+)<', str(contents))
@@ -89,10 +90,7 @@ def Log(category, message):
     errorText = category.name + ' {}:'.format(datetime.datetime.now())
     message = str(message)
     if '\n' in message:
-        message = message.strip('\n\r').replace('\n', '\n' + len(errorText) * ' ')
-    # if '\\n' in message:
-        # message = message.strip('\n\r').replace('\\n', '\n' + len(errorText) * ' ')
-        # message = message.replace('\\t', '\t')
+        message = message.strip('\n\r').replace('\n', '\n' + len(errorText) * ' ')    
     errorText += message
     with open(data_folder / logFile, 'a') as logfile:
         logfile.write(errorText + '\n')
