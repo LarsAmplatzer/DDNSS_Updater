@@ -71,10 +71,9 @@ def main():
                 # check update response
                 if regex.search('(Updated \d+ hostname.)', str(contents)):
                     Log(DebugCategory.INFO, 'Update successful. Old IP {}, New IP {}\n'.format(oldIp, newIp))
-
+                    SendMail('IP address for {} changed from {} to {}'.format(HOSTNAME, oldIp, newIp))
                     with open(data_folder / ipFile, 'w') as ipFileFile:
-                        ipFileFile.write('{}\n'.format(newIp))
-                    SendMail('IP address for {} changed from {} to {}',format(HOSTNAME, oldIp, newIp))
+                        ipFileFile.write('{}\n'.format(newIp))                    
                 else:
                     Log(DebugCategory.ERROR, 'Update failed!')
                     parts = regex.findall('>([^<>\\\\]+)<', str(contents))
