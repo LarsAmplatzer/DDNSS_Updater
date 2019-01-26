@@ -71,7 +71,7 @@ def main():
                 # check update response
                 if regex.search('(Updated \d+ hostname.)', str(contents)):
                     Log(DebugCategory.INFO, 'Update successful. Old IP {}, New IP {}\n'.format(oldIp, newIp))
-                    SendMail('IP address for {} changed from {} to {}'.format(HOSTNAME, oldIp, newIp))
+                    SendMail('DDNSS-Updater IP update report', 'IP address for {} changed from {} to {}'.format(HOSTNAME, oldIp, newIp))
                     with open(data_folder / ipFile, 'w') as ipFileFile:
                         ipFileFile.write('{}\n'.format(newIp))                    
                 else:
@@ -95,12 +95,12 @@ def Log(category, message):
         logfile.write(errorText + '\n')
     if category == DebugCategory.ERROR:
         try:
-            SendMail(errorText)
+            SendMail('DDNSS-Updater error report', errorText)
         except:
             with open(data_folder / logFile, 'a') as logfile:
                 logfile.write('ERROR {}: Sending mail failed\n'.format(datetime.datetime.now()))
 
-def SendMail(text):
+def SendMail(subject, text):
     try:
         server = smtplib.SMTP('mail.gmx.net', 587)
         server.starttls()
@@ -110,7 +110,7 @@ def SendMail(text):
         sender = 'sen'
 
         msg = MIMEText(text)
-        msg['Subject'] = 'DDNSS-Updater Error Report'
+        msg['Subject'] = subject
         msg['From'] = sender
         msg['To'] = recipients
 
