@@ -74,7 +74,7 @@ def main():
 
                     with open(data_folder / ipFile, 'w') as ipFileFile:
                         ipFileFile.write('{}\n'.format(newIp))
-                    SendMail('IP address for {} changed from {} to {}',format(DOMAIN, oldIp, newIp))
+                    SendMail('IP address for {} changed from {} to {}',format(HOSTNAME, oldIp, newIp))
                 else:
                     Log(DebugCategory.ERROR, 'Update failed!')
                     parts = regex.findall('>([^<>\\\\]+)<', str(contents))
