@@ -45,7 +45,7 @@ def main():
     except:
         Log(DebugCategory.ERROR, 'Unexpected error: {}'.format(sys.exc_info()[0]))
     else:
-        newIp = regex.search('(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3})', str(contents)).group(0)
+        newIp = regex.search('(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3})', str(contents)).group(0)       # search for a text that looks like an IP
 
         if newIp == None:
             Log(DebugCategory.ERROR, 'No IP found in HTTP response')
@@ -76,7 +76,7 @@ def main():
                         ipFileFile.write('{}\n'.format(newIp))                    
                 else:
                     Log(DebugCategory.ERROR, 'Update failed!')
-                    parts = regex.findall('>([^<>\\\\]+)<', str(contents))
+                    parts = regex.findall('>([^<>\\\\]+)<', str(contents))      # Regex: "([^<>\\]+)", only take text that does not contain <,> or \. Result is only HTML content that would be displayed to the user in a browser
                     message = ''
                     for line in parts:
                         message += ('{}\n'.format(line))
