@@ -16,11 +16,13 @@ KEYAUTH = 'KEY'
 HOSTNAME = 'DOMAIN'
 ALLHOST = 'all'
 
-# creating enumerations using class 
+
+# creating enumerations using class
 class DebugCategory(enum.Enum):
     INFO = 1
     DEBUG = 2
     ERROR = 3
+
 
 def main():
     # check if files exist
@@ -47,7 +49,7 @@ def main():
     else:
         newIp = regex.search('(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3})', str(contents)).group(0)       # search for a text that looks like an IP
 
-        if newIp == None:
+        if newIp is None:
             Log(DebugCategory.ERROR, 'No IP found in HTTP response')
 
         # compare stored IP with received IP, update if necessary
@@ -73,7 +75,7 @@ def main():
                     Log(DebugCategory.INFO, 'Update successful. Old IP {}, New IP {}\n'.format(oldIp, newIp))
                     SendMail('DDNSS-Updater IP update report', 'IP address for {} changed from {} to {}'.format(HOSTNAME, oldIp, newIp))
                     with open(data_folder / ipFile, 'w') as ipFileFile:
-                        ipFileFile.write('{}\n'.format(newIp))                    
+                        ipFileFile.write('{}\n'.format(newIp))
                 else:
                     Log(DebugCategory.ERROR, 'Update failed!')
                     parts = regex.findall('>([^<>\\\\]+)<', str(contents))      # Regex: "([^<>\\]+)", only take text that does not contain <,> or \. Result is only HTML content that would be displayed to the user in a browser
@@ -89,7 +91,7 @@ def Log(category, message):
     errorText = category.name + ' {}:'.format(datetime.datetime.now())
     message = str(message)
     if '\n' in message:
-        message = message.strip('\n\r').replace('\n', '\n' + len(errorText) * ' ')    
+        message = message.strip('\n\r').replace('\n', '\n' + len(errorText) * ' ')
     errorText += message
     with open(data_folder / logFile, 'a') as logfile:
         logfile.write(errorText + '\n')
@@ -99,6 +101,7 @@ def Log(category, message):
         except:
             with open(data_folder / logFile, 'a') as logfile:
                 logfile.write('ERROR {}: Sending mail failed\n'.format(datetime.datetime.now()))
+
 
 def SendMail(subject, text):
     try:
