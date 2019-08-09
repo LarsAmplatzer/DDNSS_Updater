@@ -81,7 +81,7 @@ def main():
                     with open(ipFile, 'w') as ipFileFile:
                         ipFileFile.write('{}\n'.format(newIp))
                 else:
-                    Log(DebugCategory.ERROR, 'Update failed!', 'Could not finde a valid IP address in response'))
+                    Log(DebugCategory.ERROR, 'Update failed!', 'Could not finde a valid IP address in response')
                     parts = regex.findall('>([^<>\\\\]+)<', str(contents))      # Regex: "([^<>\\]+)", only take text that does not contain <,> or \. Result is only HTML content that would be displayed to the user in a browser
                     message = ''
                     for line in parts:
