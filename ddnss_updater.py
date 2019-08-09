@@ -43,6 +43,7 @@ def main():
     # check if DNS service is available
     if(is_connected('https://www.ddnss.de') == False)
         Log(DebugCategory.ERROR, 'DNS service', 'DNS service not reachable -> https://www.ddnss.de')
+        sys.exit()
 
     # get current IP
     request = Request('https://www.ddnss.de/meineip.php'):
