@@ -44,17 +44,17 @@ def main():
     try:
         contents = urlopen(request).read()
     except HTTPError as e:
-        Log(DebugCategory.ERROR, e.code)
-        Log(DebugCategory.DEBUG, e.read())
+        Log(DebugCategory.ERROR, 'HTTPError in urlopen() for {}'.format(request.full_url), e.code)
+        Log(DebugCategory.DEBUG, 'HTTPError in urlopen() for {}'.format(request.full_url), e.read())
     except URLError as e:
-        Log(DebugCategory.ERROR, e.reason)
+        Log(DebugCategory.ERROR, 'URLError in urlopen() for {}'.format(request.full_url), e.reason)
     except:
-        Log(DebugCategory.ERROR, 'Unexpected error: {}'.format(sys.exc_info()[0]))
+        Log(DebugCategory.ERROR, 'General error in urlopen for {}'.format(request.full_url), 'Unexpected error: {}'.format(sys.exc_info()[0]))
     else:
         newIp = regex.search('(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3})', str(contents)).group(0)       # search for a text that looks like an IP
 
         if newIp is None:
-            Log(DebugCategory.ERROR, 'No IP found in HTTP response')
+            Log(DebugCategory.ERROR,"newIp", 'No IP found in HTTP response')
 
         # compare stored IP with received IP, update if necessary
         with open(ipFile, 'r') as ipFileFile:
@@ -67,36 +67,35 @@ def main():
                 contents = urlopen(request).read()
 
             except HTTPError as e:
-                Log(DebugCategory.ERROR, e.code)
-                Log(DebugCategory.DEBUG, e.read())
+                Log(DebugCategory.ERROR, 'HTTPError in urlopen() for {}'.format(request.full_url), e.code)
+                Log(DebugCategory.DEBUG, 'HTTPError in urlopen() for {}'.format(request.full_url), e.read())
             except URLError as e:
-                Log(DebugCategory.ERROR, e.reason)
+                Log(DebugCategory.ERROR, 'URLError in urlopen() for {}'.format(request.full_url), e.reason)
             except:
-                Log(DebugCategory.ERROR, 'Unexpected error: {}'.format(sys.exc_info()[0]))
+                Log(DebugCategory.ERROR, 'General error in urlopen for {}'.format(request.full_url), 'Unexpected error: {}'.format(sys.exc_info()[0]))
             else:
                 # check update response
                 if regex.search('(Updated \d+ hostname.)', str(contents)):
-                    Log(DebugCategory.INFO, 'Update successful. Old IP {}, New IP {}\n'.format(oldIp, newIp))
+                    Log(DebugCategory.INFO, 'IP update', 'Update successful. Old IP {}, New IP {}\n'.format(oldIp, newIp))
                     SendMail('DDNSS-Updater IP update report', 'IP address for {} changed from {} to {}'.format(HOSTNAME, oldIp, newIp))
                     with open(ipFile, 'w') as ipFileFile:
                         ipFileFile.write('{}\n'.format(newIp))
                 else:
-                    Log(DebugCategory.ERROR, 'Update failed!')
+                    Log(DebugCategory.ERROR, 'Update failed!', 'Could not finde a valid IP address in response'))
                     parts = regex.findall('>([^<>\\\\]+)<', str(contents))      # Regex: "([^<>\\]+)", only take text that does not contain <,> or \. Result is only HTML content that would be displayed to the user in a browser
                     message = ''
                     for line in parts:
                         message += ('{}\n'.format(line))
-                    Log(DebugCategory.ERROR, message)
+                    Log(DebugCategory.ERROR, 'Response details', message)
         else:
-            Log(DebugCategory.INFO, 'IP did not change {}'.format(oldIp))
+            Log(DebugCategory.INFO, 'IP status', 'IP did not change {}'.format(oldIp))
 
 
-def Log(category, message):
-    errorText = category.name + ' {}:'.format(datetime.datetime.now())
+def Log(category, hint, message):
     message = str(message)
     if '\n' in message:
         message = message.strip('\n\r').replace('\n', '\n' + len(errorText) * ' ')
-    errorText += message
+    errorText = category.name + ' {}: '.format(datetime.datetime.now()) + hint + ': ' + message 
     with open(logFile, 'a') as logfile:
         logfile.write(errorText + '\n')
     if category == DebugCategory.ERROR:
@@ -120,7 +119,7 @@ def SendMail(subject, text):
 
         server.send_message(msg, sender, recipient)
     except:
-        Log(DebugCategory.DEBUG, sys.exc_info()[0])
+        Log(DebugCategory.DEBUG, 'Sending mail', sys.exc_info()[0])
 
 
 def LoadConfiguration(configfile):
