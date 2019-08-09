@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 import configparser
+import socket
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
 import datetime
@@ -38,6 +39,10 @@ def main():
         error_text = ('{} {}: {}\n'.format(DebugCategory.DEBUG.name, datetime.datetime.now(), "IpFile does not exist"))
         print(error_text)
         sys.exit(error_text)
+    
+    # check if DNS service is available
+    if(is_connected('https://www.ddnss.de') == False)
+        Log(DebugCategory.ERROR, 'DNS service', 'DNS service not reachable -> https://www.ddnss.de')
 
     # get current IP
     request = Request('https://www.ddnss.de/meineip.php')
@@ -121,6 +126,14 @@ def SendMail(subject, text):
     except:
         Log(DebugCategory.DEBUG, 'Sending mail', sys.exc_info()[0])
 
+def is_connected(remote):
+  try:
+    host = socket.gethostbyname(remote)
+    s = socket.create_connection((host, 80), 2)
+    return True
+  except:
+     pass
+  return False
 
 def LoadConfiguration(configfile):
     config.read(configfile)    
