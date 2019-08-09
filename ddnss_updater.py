@@ -45,7 +45,7 @@ def main():
         Log(DebugCategory.ERROR, 'DNS service', 'DNS service not reachable -> https://www.ddnss.de')
 
     # get current IP
-    request = Request('https://www.ddnss.de/meineip.php')
+    request = Request('https://www.ddnss.de/meineip.php'):
     try:
         contents = urlopen(request).read()
     except HTTPError as e:
